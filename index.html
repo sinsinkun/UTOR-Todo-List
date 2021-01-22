@@ -22,23 +22,39 @@
   </div>
   <script>
 
-    document.querySelector("#todo-form")
     var inputList = []
+    // Initialize inputList array
     if (localStorage.inputList) {
       inputList = JSON.parse(localStorage.inputList)
     }
-    function addToList() {
-      var input = document.querySelector("#todo-text").value
-      inputList.push(input)
-      localStorage.inputList = JSON.stringify(inputList)
-      var inputHTML = "<li>" + input + "<button id='item-" + inputList.length-1 + "'></button></li>"
-      document.querySelector("#todo-list").innerHTML += inputHtml
+    // Build list
+    for (let i = 0; i < inputList.length; i++) {
+      if (inputList[i].length > 0) {
+        let inputHTML = `<li id="item-${i}">${inputList[i]}<button onClick=removeItem(${i})> x </button></li>`;
+        document.querySelector("#todo-list").innerHTML += inputHTML;
+      }
     }
 
+    // Add to list
+    function addToList() {
+      var input = document.querySelector("#todo-text").value;
+      inputList.push(input);
+      localStorage.inputList = JSON.stringify(inputList);
+    }
 
-      // Add to-dos to list on [Enter] & Save to-dos to localstorage
-      // Add button to list that removes item (removes from local storage)
-      // Make to-do list items modifiable
+    // Remove from list
+    function removeItem(item) {
+      inputList[item] = '';
+      localStorage.inputList = JSON.stringify(inputList);
+      document.querySelector(`#item-${item}`).remove();
+      // Clear local storage if array is empty
+      for (let i=0; i<inputList.length; i++) {
+        if (inputList[i].length > 0) return;
+        localStorage.removeItem("inputList");
+      }
+    }
+    
+    // Make to-do list items modifiable
   </script>
 </body>
 
