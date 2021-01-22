@@ -1,28 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <link rel="stylesheet" href="./style.css" />
-    <title>Todo List</title>
-  </head>
-  <body>
-    <div class="card">
-      <h1>Todo Tracker</h1>
-      <form id="todo-form" method="POST">
-        <label for="todo-text">Add a Todo: </label>
-        <input type="text" placeholder="I need to..." name="todo-text" id="todo-text" />
-      </form>
-      <p>Todo Count: <span id="todo-count">0</span></p>
-      <ul id="todo-list"></ul>
-  
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <link rel="stylesheet" href="./style.css" />
+  <title>Todo List</title>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Todo Tracker</h1>
+    <form onsubmit=addToList() id="todo-form" method="POST">
+      <label for="todo-text">Add a Todo: </label>
+      <input type="text" placeholder="I need to..." name="todo-text" id="todo-text" />
+    </form>
+    <p>Todo Count: <span id="todo-count">0</span></p>
+    <ul id="todo-list"></ul>
+
   </div>
-    <script>
-      // Add to-dos to list on [Enter]
-      // Save to-dos to localstorage
-      // Add button to list that removes item (removes from local storage)
-      // Make to-do list items modifiable
-    </script>
-  </body>
+  <script>
+
+    var inputList = []
+    // Initialize inputList array
+    if (localStorage.inputList) {
+      inputList = JSON.parse(localStorage.inputList)
+    }
+    // Build list
+    for (let i = 0; i < inputList.length; i++) {
+      if (inputList[i].length > 0) {
+        let inputHTML = `<li id="item-${i}">${inputList[i]}<button onClick=removeItem(${i})> x </button></li>`;
+        document.querySelector("#todo-list").innerHTML += inputHTML;
+      }
+    }
+
+    // Add to list
+    function addToList() {
+      var input = document.querySelector("#todo-text").value;
+      inputList.push(input);
+      localStorage.inputList = JSON.stringify(inputList);
+    }
+
+    // Remove from list
+    function removeItem(item) {
+      inputList[item] = '';
+      localStorage.inputList = JSON.stringify(inputList);
+      document.querySelector(`#item-${item}`).remove();
+      // Clear local storage if array is empty
+      for (let i=0; i<inputList.length; i++) {
+        if (inputList[i].length > 0) return;
+        localStorage.removeItem("inputList");
+      }
+    }
+    
+    // Make to-do list items modifiable
+  </script>
+</body>
+
 </html>
